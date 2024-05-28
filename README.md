@@ -1,7 +1,9 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
+## To run the repo:
+- Create .env.test and .env.development
+- Add PGDATABASE= to both files and follow with database name (no spaces)
+- Use test database name for .env.test, and development database name for .env.development
 
 
 --- 
