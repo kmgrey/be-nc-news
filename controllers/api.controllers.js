@@ -1,4 +1,4 @@
-const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, getValidArticleIds } = require('../models/api.models');
+const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId } = require('../models/api.models');
 
 exports.getApi = (request, response, next) => {
 	fetchApi()
@@ -25,10 +25,19 @@ exports.getArticles = (request, response, next) => {
 };
 
 exports.getArticleById = (request, response, next) => {
-    const { article_id } = request.params;
-    fetchArticleById(article_id)
-        .then((article) => {
-            response.status(200).send({ article });
-        })
-        .catch(next);
+	const { article_id } = request.params;
+	fetchArticleById(article_id)
+		.then((article) => {
+			response.status(200).send({ article });
+		})
+		.catch(next);
+};
+
+exports.getArticleComments = (request, response, next) => {
+	const { article_id } = request.params;
+	fetchCommentsByArticleId(article_id)
+		.then((comments) => {
+			response.status(200).send({ comments });
+		})
+		.catch(next);
 };
