@@ -45,6 +45,14 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+    test('404: endpoint not found', () => {
+        return request(app)
+        .get('/api/tupics')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    });
 });
 
 describe('GET /api/articles', () => {
