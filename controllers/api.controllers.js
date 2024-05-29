@@ -1,4 +1,4 @@
-const { fetchApi, fetchTopics, fetchArticleById, getValidArticleIds } = require('../models/api.models');
+const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, getValidArticleIds } = require('../models/api.models');
 
 exports.getApi = (request, response, next) => {
 	fetchApi()
@@ -12,6 +12,14 @@ exports.getTopics = (request, response, next) => {
 	fetchTopics()
 		.then((topics) => {
 			response.status(200).send({ topics });
+		})
+		.catch(next);
+};
+
+exports.getArticles = (request, response, next) => {
+	fetchArticles()
+		.then((articles) => {
+			response.status(200).send({ articles });
 		})
 		.catch(next);
 };
