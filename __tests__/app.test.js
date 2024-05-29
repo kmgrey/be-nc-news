@@ -181,3 +181,66 @@ describe('GET /api/articles/:article_id/comments', () => {
 			});
 	});
 });
+
+describe.only('POST /api/articles/:article_id/comments', () => {
+	test('201: inserts new comment and returns it', () => {
+		const newComment = {
+			username: 'butter_bridge',
+			body: "I can't believe it's not butter",
+		};
+		return request(app)
+			.post('/api/articles/1/comments')
+			.send(newComment)
+			.expect(201)
+			.then(({ body }) => {
+				expect(body.comment).toEqual(
+					expect.objectContaining({
+						comment_id: 19,
+						body: "I can't believe it's not butter",
+						article_id: 1,
+						author: 'butter_bridge',
+						votes: 0,
+						created_at: expect.any(String),
+					})
+				);
+			});
+	});
+	test('404: returns not found when invalid user sent', () => {
+		const badUser = {
+			username: 'not_a_user',
+			body: 'This should fail right?',
+		};
+		return request(app)
+			.post('/api/articles/1/comments')
+			.send(badUser)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+	test('400: returns bad request when id is NaN', () => {
+		const newComment = {
+			username: 'butter_bridge',
+			body: "I can't believe it's not butter",
+		};
+		return request(app)
+			.post('/api/articles/banana/comments')
+			.send(newComment)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad Request');
+			});
+	});
+	test('400: returns bad request if invalid comment sent', () => {
+		const badComment = {
+			username: 'butter_bridge',
+		};
+		return request(app)
+			.post('/api/articles/1/comments')
+			.send(badComment)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad Request');
+			});
+	});
+});

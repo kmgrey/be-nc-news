@@ -59,5 +59,17 @@
 				}
 			]
 		}
+	},
+	"POST /api/articles/:article_id/comments": {
+		"description": "posts a comment to an article",
+		"queries": [],
+		"exampleResponse": {
+			"comment_id": 19,
+			"body": "I can't believe it's not butter",
+			"article_id": 1,
+			"author": "butter_bridge",
+			"votes": 0,
+			"created_at": "2024-05-29T15:29:59.981Z"
+		}
 	}
 }
