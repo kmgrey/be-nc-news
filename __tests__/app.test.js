@@ -45,6 +45,14 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+    test('404: endpoint not found', () => {
+        return request(app)
+        .get('/api/tupics')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    });
 });
 
 describe('GET /api/articles', () => {
@@ -107,12 +115,12 @@ describe('GET /api/articles/:article_id', () => {
 				expect(body.msg).toBe('Bad Request');
 			});
 	});
-	test('400: returns bad request when id outside of range', () => {
+	test('404: returns bad request when id outside of range', () => {
 		return request(app)
 			.get('/api/articles/9990')
-			.expect(400)
+			.expect(404)
 			.then(({ body }) => {
-				expect(body.msg).toBe('Bad Request');
+				expect(body.msg).toBe('Not Found');
 			});
 	});
 });

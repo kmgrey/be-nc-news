@@ -28,24 +28,15 @@ exports.fetchArticles = () => {
 	});
 };
 
-let validArticleIds = [];
-
-exports.getValidArticleIds = () => {
-	let sqlQuery = `SELECT * FROM articles`;
-	return db.query(sqlQuery).then((result) => {
-        const articleArr = result.rows
-        articleArr.forEach((article) => {
-            validArticleIds.push(article.article_id)
-        })
-	});
-};
-
 exports.fetchArticleById = (id) => {
-	if (id > validArticleIds.length || isNaN(id)) {
-		return Promise.reject({ status: 400, msg: 'Bad Request' });
-	}
-	let sqlQuery = `SELECT * FROM articles WHERE article_id = $1`;
-	return db.query(sqlQuery, [id]).then((result) => {
-		return result.rows[0];
-	});
+    if (isNaN(id)) {
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
+    }
+    let sqlQuery = `SELECT * FROM articles WHERE article_id = $1`;
+    return db.query(sqlQuery, [id]).then((result) => {
+        if (result.rows.length === 0) {
+            return Promise.reject({ status: 404, msg: 'Not Found' });
+        }
+        return result.rows[0];
+    });
 };
