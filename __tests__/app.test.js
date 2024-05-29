@@ -45,14 +45,14 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
-    test('404: endpoint not found', () => {
-        return request(app)
-        .get('/api/tupics')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe('Not Found')
-        })
-    });
+	test('404: endpoint not found', () => {
+		return request(app)
+			.get('/api/tupics')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
 });
 
 describe('GET /api/articles', () => {
@@ -78,14 +78,14 @@ describe('GET /api/articles', () => {
 				});
 			});
 	});
-    test('404: endpoint not found', () => {
-        return request(app)
-        .get('/api/articules')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe('Not Found')
-        })
-    });
+	test('404: endpoint not found', () => {
+		return request(app)
+			.get('/api/articules')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
 });
 
 describe('GET /api/articles/:article_id', () => {
@@ -115,9 +115,66 @@ describe('GET /api/articles/:article_id', () => {
 				expect(body.msg).toBe('Bad Request');
 			});
 	});
-	test('404: returns bad request when id outside of range', () => {
+	test('404: returns not found when id outside of range', () => {
 		return request(app)
 			.get('/api/articles/9990')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+	test('200: returns array of comments from selected article ', () => {
+		return request(app)
+			.get('/api/articles/9/comments')
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toHaveLength(2);
+				expect(comments).toEqual([
+					{
+						comment_id: 1,
+						body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+						votes: 16,
+						author: 'butter_bridge',
+						article_id: 9,
+						created_at: '2020-04-06T12:17:00.000Z',
+					},
+					{
+						comment_id: 17,
+						body: 'The owls are not what they seem.',
+						votes: 20,
+						author: 'icellusedkars',
+						article_id: 9,
+						created_at: '2020-03-14T17:02:00.000Z',
+					},
+				]);
+				expect(comments).toBeSortedBy('created_at', { descending: true });
+			});
+	});
+	test('200: returns longer array of comments from selected article sorted by most recent', () => {
+		return request(app)
+			.get('/api/articles/1/comments')
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toHaveLength(11);
+				expect(comments).toBeSortedBy('created_at', { descending: true });
+			});
+	});
+	test('400: returns bad request when id is NaN', () => {
+		return request(app)
+			.get('/api/articles/banana/comments')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad Request');
+			});
+	});
+	test('404: returns not found when id outside of range', () => {
+		return request(app)
+			.get('/api/articles/999')
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
