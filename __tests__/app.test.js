@@ -174,7 +174,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 	});
 	test('404: returns not found when id outside of range', () => {
 		return request(app)
-			.get('/api/articles/999')
+			.get('/api/articles/999/comments')
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
@@ -182,7 +182,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 	});
 });
 
-describe.only('POST /api/articles/:article_id/comments', () => {
+describe('POST /api/articles/:article_id/comments', () => {
 	test('201: inserts new comment and returns it', () => {
 		const newComment = {
 			username: 'butter_bridge',
@@ -213,6 +213,19 @@ describe.only('POST /api/articles/:article_id/comments', () => {
 		return request(app)
 			.post('/api/articles/1/comments')
 			.send(badUser)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+    test('404: returns not found when id outside of range', () => {
+        const newComment = {
+			username: 'butter_bridge',
+			body: "I can't believe it's not butter",
+		};
+		return request(app)
+			.post('/api/articles/9999/comments')
+			.send(newComment)
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
