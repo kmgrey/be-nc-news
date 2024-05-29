@@ -47,6 +47,39 @@ describe('GET /api/topics', () => {
 	});
 });
 
+describe('GET /api/articles', () => {
+	test('200: returns an array of all articles sorted in desc order by date', () => {
+		return request(app)
+			.get('/api/articles')
+			.expect(200)
+			.then(({ body }) => {
+				const { articles } = body;
+				expect(articles).toHaveLength(13);
+				expect(articles).toBeSortedBy('created_at', { descending: true });
+				articles.forEach((article) => {
+					expect(article).toMatchObject({
+						author: expect.any(String),
+						title: expect.any(String),
+						article_id: expect.any(Number),
+						topic: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						article_img_url: expect.any(String),
+						comment_count: expect.any(Number),
+					});
+				});
+			});
+	});
+    test('404: endpoint not found', () => {
+        return request(app)
+        .get('/api/articules')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    });
+});
+
 describe('GET /api/articles/:article_id', () => {
 	test('200: responds with an article selected by given id', () => {
 		return request(app)
