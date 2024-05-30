@@ -1,4 +1,4 @@
-const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId, updateArticleVotes } = require('../models/api.models');
+const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId, updateArticleVotes, removeCommentById } = require('../models/api.models');
 
 exports.getApi = (request, response, next) => {
 	fetchApi()
@@ -64,6 +64,18 @@ exports.patchArticleById = (request, response, next) => {
 	updateArticleVotes(inc_votes, article_id)
 		.then((article) => {
 			response.status(200).send({ article });
+		})
+		.catch(next);
+};
+
+exports.deleteCommentById = (request, response, next) => {
+	const { comment_id } = request.params;
+	if (isNaN(comment_id)) {
+		response.status(400).send({ msg: 'Bad Request' });
+	}
+	removeCommentById(comment_id)
+		.then((comment) => {
+			response.status(204).send();
 		})
 		.catch(next);
 };
