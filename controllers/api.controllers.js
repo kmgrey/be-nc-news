@@ -1,4 +1,4 @@
-const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId, updateArticleVotes, removeCommentById } = require('../models/api.models');
+const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId, updateArticleVotes, removeCommentById, fetchUsers } = require('../models/api.models');
 
 exports.getApi = (request, response, next) => {
 	fetchApi()
@@ -76,6 +76,14 @@ exports.deleteCommentById = (request, response, next) => {
 	removeCommentById(comment_id)
 		.then((comment) => {
 			response.status(204).send();
+		})
+		.catch(next);
+};
+
+exports.getUsers = (request, response, next) => {
+	fetchUsers()
+		.then((users) => {
+			response.status(200).send({ users });
 		})
 		.catch(next);
 };

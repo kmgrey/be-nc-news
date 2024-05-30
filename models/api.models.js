@@ -99,3 +99,10 @@ exports.removeCommentById = (id) => {
 		return result.rows[0];
 	});
 };
+
+exports.fetchUsers = () => {
+    let sqlQuery = `SELECT * FROM users`;
+	return db.query(sqlQuery).then(({ rows }) => {
+		return rows;
+	});
+}

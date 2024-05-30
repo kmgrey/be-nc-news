@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { getApi, getTopics, getArticles, getArticleById, getArticleComments, postArticleComment, patchArticleById, deleteCommentById } = require('./controllers/api.controllers');
+const { getApi, getTopics, getArticles, getArticleById, getArticleComments, postArticleComment, patchArticleById, deleteCommentById, getUsers } = require('./controllers/api.controllers');
 app.use(express.json());
 
 app.get('/api', getApi);
@@ -18,6 +18,8 @@ app.post('/api/articles/:article_id/comments', postArticleComment);
 app.patch('/api/articles/:article_id', patchArticleById);
 
 app.delete('/api/comments/:comment_id', deleteCommentById);
+
+app.get('/api/users', getUsers);
 
 app.use((request, response, next) => {
 	const error = new Error('Not Found');
