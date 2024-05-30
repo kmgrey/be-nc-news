@@ -17,8 +17,12 @@ exports.getTopics = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-	fetchArticles()
+	const { author, topic, sort_by, order } = request.query;
+	fetchArticles(author, topic, sort_by, order)
 		.then((articles) => {
+            if (articles.length === 0){
+                response.status(404).send({ msg: 'Not Found' });
+            }
 			response.status(200).send({ articles });
 		})
 		.catch(next);
