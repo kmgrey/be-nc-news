@@ -375,9 +375,41 @@ describe('GET /api/users', () => {
 				});
 			});
 	});
-    test('404: endpoint not found', () => {
+	test('404: endpoint not found', () => {
 		return request(app)
 			.get('/api/uses')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+});
+
+describe('GET /api/articles?topic', () => {
+	test('200: returns an array of articles with queried topic', () => {
+		return request(app)
+			.get('/api/articles?topic=cats')
+			.expect(200)
+			.then(({ body }) => {
+				const { articles } = body;
+				expect(articles).toHaveLength(1);
+				expect(articles).toEqual([
+					{
+						author: 'rogersop',
+						title: 'UNCOVERED: catspiracy to bring down democracy',
+						article_id: 5,
+						topic: 'cats',
+						created_at: '2020-08-03T13:14:00.000Z',
+						votes: 0,
+						article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+						comment_count: 2,
+					},
+				]);
+			});
+	});
+	test('404: returns not found if invalid topic queried', () => {
+		return request(app)
+			.get('/api/articles?topic=banana')
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
