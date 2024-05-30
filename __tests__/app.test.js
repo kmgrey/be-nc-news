@@ -331,7 +331,7 @@ describe('PATCH /api/articles/:article_id', () => {
 	});
 });
 
-describe.only('DELETE /api/comments/:comment_id', () => {
+describe('DELETE /api/comments/:comment_id', () => {
 	test('204: deletes a comment by comment id and reutrns nothing', () => {
 		return request(app)
 			.delete('/api/comments/1')
@@ -351,6 +351,33 @@ describe.only('DELETE /api/comments/:comment_id', () => {
 	test('404: responds not found when comment id is non-existent', () => {
 		return request(app)
 			.delete('/api/comments/999')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+});
+
+describe('GET /api/users', () => {
+	test('200: responds with an array of users ', () => {
+		return request(app)
+			.get('/api/users')
+			.expect(200)
+			.then(({ body }) => {
+				const { users } = body;
+				expect(users).toHaveLength(4);
+				users.forEach((user) => {
+					expect(user).toMatchObject({
+						username: expect.any(String),
+						name: expect.any(String),
+						avatar_url: expect.any(String),
+					});
+				});
+			});
+	});
+    test('404: endpoint not found', () => {
+		return request(app)
+			.get('/api/uses')
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
