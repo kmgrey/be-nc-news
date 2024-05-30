@@ -1,4 +1,4 @@
-const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId } = require('../models/api.models');
+const { fetchApi, fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, postCommentByArticleId, updateArticleVotes } = require('../models/api.models');
 
 exports.getApi = (request, response, next) => {
 	fetchApi()
@@ -44,13 +44,26 @@ exports.getArticleComments = (request, response, next) => {
 
 exports.postArticleComment = (request, response, next) => {
 	const { article_id } = request.params;
-	const {username, body} = request.body;
+	const { username, body } = request.body;
 	if (!username || !body) {
 		response.status(400).send({ msg: 'Bad Request' });
 	}
 	postCommentByArticleId(username, body, article_id)
 		.then((comment) => {
 			response.status(201).send({ comment });
+		})
+		.catch(next);
+};
+
+exports.patchArticleById = (request, response, next) => {
+	const { article_id } = request.params;
+	const { inc_votes } = request.body;
+	if (typeof inc_votes !== 'number') {
+		response.status(400).send({ msg: 'Bad Request' });
+	}
+	updateArticleVotes(inc_votes, article_id)
+		.then((article) => {
+			response.status(200).send({ article });
 		})
 		.catch(next);
 };

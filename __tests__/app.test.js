@@ -218,8 +218,8 @@ describe('POST /api/articles/:article_id/comments', () => {
 				expect(body.msg).toBe('Not Found');
 			});
 	});
-    test('404: returns not found when id outside of range', () => {
-        const newComment = {
+	test('404: returns not found when id outside of range', () => {
+		const newComment = {
 			username: 'butter_bridge',
 			body: "I can't believe it's not butter",
 		};
@@ -251,6 +251,79 @@ describe('POST /api/articles/:article_id/comments', () => {
 		return request(app)
 			.post('/api/articles/1/comments')
 			.send(badComment)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad Request');
+			});
+	});
+});
+
+describe('PATCH /api/articles/:article_id', () => {
+	test('200: updates the votes for an article by id - upvote', () => {
+		const upvotes = { inc_votes: 50 };
+		return request(app)
+			.patch('/api/articles/1')
+			.send(upvotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { article } = body;
+				expect(article).toEqual({
+					article_id: 1,
+					title: 'Living in the shadow of a great man',
+					topic: 'mitch',
+					author: 'butter_bridge',
+					body: 'I find this existence challenging',
+					created_at: expect.any(String),
+					votes: 150,
+					article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+				});
+			});
+	});
+	test('200: updates the votes for an article by id - downvote', () => {
+		const downvotes = { inc_votes: -200 };
+		return request(app)
+			.patch('/api/articles/1')
+			.send(downvotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { article } = body;
+				expect(article).toEqual({
+					article_id: 1,
+					title: 'Living in the shadow of a great man',
+					topic: 'mitch',
+					author: 'butter_bridge',
+					body: 'I find this existence challenging',
+					created_at: expect.any(String),
+					votes: -100,
+					article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+				});
+			});
+	});
+	test('404: responds with not found when the article id does not exist', () => {
+		const upvotes = { inc_votes: 50 };
+		return request(app)
+			.patch('/api/articles/999')
+			.send(upvotes)
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+	test('400: responds with bad request when the data is invalid', () => {
+		const invalidData = { inc_votes: 'banana' };
+		return request(app)
+			.patch('/api/articles/1')
+			.send(invalidData)
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad Request');
+			});
+	});
+	test('400: responds with bad request when article id not valid', () => {
+		const invalidData = { inc_votes: 50 };
+		return request(app)
+			.patch('/api/articles/banana')
+			.send(invalidData)
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Bad Request');
