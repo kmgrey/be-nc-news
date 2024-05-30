@@ -47,9 +47,9 @@ exports.fetchCommentsByArticleId = (id) => {
 	}
 	let sqlQuery = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`;
 	return db.query(sqlQuery, [id]).then((result) => {
-        if (result.rows.length === 0) {
-            return Promise.reject({ status: 404, msg: 'Not Found' });
-        }
+		if (result.rows.length === 0) {
+			return Promise.reject({ status: 404, msg: 'Not Found' });
+		}
 		return result.rows;
 	});
 };
@@ -75,4 +75,19 @@ exports.postCommentByArticleId = (username, body, id) => {
 			});
 		});
 	});
+};
+
+exports.updateArticleVotes = (votes, id) => {
+    if (isNaN(id)) {
+		return Promise.reject({ status: 400, msg: 'Bad Request' });
+	}
+    let sqlQuery = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`
+    const queryParams = [votes, id]
+	return db.query(sqlQuery, queryParams)
+		.then((result) => {
+			if (result.rows.length === 0) {
+				return Promise.reject({ status: 404, msg: 'Not Found' });
+			}
+			return result.rows[0];
+		});
 };
