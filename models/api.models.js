@@ -15,6 +15,13 @@ exports.fetchTopics = () => {
 	});
 };
 
+exports.fetchUsers = () => {
+	let sqlQuery = `SELECT * FROM users`;
+	return db.query(sqlQuery).then(({ rows }) => {
+		return rows;
+	});
+};
+
 exports.fetchArticles = (author, topic, sort_by, order) => {
 	let sqlQuery = `
         SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
@@ -109,12 +116,5 @@ exports.removeCommentById = (id) => {
 			return Promise.reject({ status: 404, msg: 'Not Found' });
 		}
 		return result.rows[0];
-	});
-};
-
-exports.fetchUsers = () => {
-	let sqlQuery = `SELECT * FROM users`;
-	return db.query(sqlQuery).then(({ rows }) => {
-		return rows;
 	});
 };

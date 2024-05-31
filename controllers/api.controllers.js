@@ -16,6 +16,14 @@ exports.getTopics = (request, response, next) => {
 		.catch(next);
 };
 
+exports.getUsers = (request, response, next) => {
+	fetchUsers()
+		.then((users) => {
+			response.status(200).send({ users });
+		})
+		.catch(next);
+};
+
 exports.getArticles = (request, response, next) => {
 	const { author, topic, sort_by, order } = request.query;
 	fetchArticles(author, topic, sort_by, order)
@@ -80,14 +88,6 @@ exports.deleteCommentById = (request, response, next) => {
 	removeCommentById(comment_id)
 		.then((comment) => {
 			response.status(204).send();
-		})
-		.catch(next);
-};
-
-exports.getUsers = (request, response, next) => {
-	fetchUsers()
-		.then((users) => {
-			response.status(200).send({ users });
 		})
 		.catch(next);
 };
