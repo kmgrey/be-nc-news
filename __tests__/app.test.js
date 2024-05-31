@@ -7,6 +7,17 @@ const request = require('supertest');
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
+describe('GET /api/incorrect_endpoint', () => {
+    test('404: endpoint not found when passed non-existent endpoint', () => {
+		return request(app)
+			.get('/api/banana')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Not Found');
+			});
+	});
+})
+
 describe('GET /api', () => {
 	test('200: responds with an object describing all available api endpoints', () => {
 		return request(app)
@@ -45,12 +56,23 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
-	test('404: endpoint not found', () => {
+});
+
+describe('GET /api/users', () => {
+	test('200: responds with an array of users ', () => {
 		return request(app)
-			.get('/api/tupics')
-			.expect(404)
+			.get('/api/users')
+			.expect(200)
 			.then(({ body }) => {
-				expect(body.msg).toBe('Not Found');
+				const { users } = body;
+				expect(users).toHaveLength(4);
+				users.forEach((user) => {
+					expect(user).toMatchObject({
+						username: expect.any(String),
+						name: expect.any(String),
+						avatar_url: expect.any(String),
+					});
+				});
 			});
 	});
 });
@@ -76,14 +98,6 @@ describe('GET /api/articles', () => {
 						comment_count: expect.any(Number),
 					});
 				});
-			});
-	});
-	test('404: endpoint not found', () => {
-		return request(app)
-			.get('/api/articules')
-			.expect(404)
-			.then(({ body }) => {
-				expect(body.msg).toBe('Not Found');
 			});
 	});
 });
@@ -353,33 +367,6 @@ describe('DELETE /api/comments/:comment_id', () => {
 	test('404: responds not found when comment id is non-existent', () => {
 		return request(app)
 			.delete('/api/comments/999')
-			.expect(404)
-			.then(({ body }) => {
-				expect(body.msg).toBe('Not Found');
-			});
-	});
-});
-
-describe('GET /api/users', () => {
-	test('200: responds with an array of users ', () => {
-		return request(app)
-			.get('/api/users')
-			.expect(200)
-			.then(({ body }) => {
-				const { users } = body;
-				expect(users).toHaveLength(4);
-				users.forEach((user) => {
-					expect(user).toMatchObject({
-						username: expect.any(String),
-						name: expect.any(String),
-						avatar_url: expect.any(String),
-					});
-				});
-			});
-	});
-	test('404: endpoint not found', () => {
-		return request(app)
-			.get('/api/uses')
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Not Found');
