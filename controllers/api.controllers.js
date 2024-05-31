@@ -28,9 +28,9 @@ exports.getArticles = (request, response, next) => {
 	const { author, topic, sort_by, order } = request.query;
 	fetchArticles(author, topic, sort_by, order)
 		.then((articles) => {
-            if (articles.length === 0){
-                response.status(404).send({ msg: 'Not Found' });
-            }
+			if (articles.length === 0) {
+				response.status(404).send({ msg: 'Not Found' });
+			}
 			response.status(200).send({ articles });
 		})
 		.catch(next);
@@ -38,6 +38,9 @@ exports.getArticles = (request, response, next) => {
 
 exports.getArticleById = (request, response, next) => {
 	const { article_id } = request.params;
+	if (isNaN(article_id)) {
+		response.status(400).send({ msg: 'Bad Request' });
+	}
 	fetchArticleById(article_id)
 		.then((article) => {
 			response.status(200).send({ article });
@@ -47,6 +50,9 @@ exports.getArticleById = (request, response, next) => {
 
 exports.getArticleComments = (request, response, next) => {
 	const { article_id } = request.params;
+	if (isNaN(article_id)) {
+		response.status(400).send({ msg: 'Bad Request' });
+	}
 	fetchCommentsByArticleId(article_id)
 		.then((comments) => {
 			response.status(200).send({ comments });
@@ -57,7 +63,7 @@ exports.getArticleComments = (request, response, next) => {
 exports.postArticleComment = (request, response, next) => {
 	const { article_id } = request.params;
 	const { username, body } = request.body;
-	if (!username || !body) {
+	if (!username || !body || isNaN(article_id)) {
 		response.status(400).send({ msg: 'Bad Request' });
 	}
 	postCommentByArticleId(username, body, article_id)
@@ -70,7 +76,7 @@ exports.postArticleComment = (request, response, next) => {
 exports.patchArticleById = (request, response, next) => {
 	const { article_id } = request.params;
 	const { inc_votes } = request.body;
-	if (typeof inc_votes !== 'number') {
+	if (typeof inc_votes !== 'number' || isNaN(article_id)) {
 		response.status(400).send({ msg: 'Bad Request' });
 	}
 	updateArticleVotes(inc_votes, article_id)
